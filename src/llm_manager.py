@@ -40,4 +40,22 @@ class LLMManager:
             return json.loads(response)
         except Exception as e:
             logger.error(f"Error matching profile: {str(e)}")
-            return None 
+            return None
+
+    def analyze_resume_job_match(self, resume_text, job_details):
+        try:
+            prompt = f"{RESUME_ANALYSIS_PROMPT}\nResume: {resume_text}\nJob: {json.dumps(job_details)}"
+            response = self.llm.predict(prompt)
+            return json.loads(response)
+        except Exception as e:
+            logger.error(f"Error analyzing resume: {str(e)}")
+            return None
+
+    def generate_optimized_resume(self, original_resume, job_details):
+        try:
+            prompt = f"{RESUME_GENERATION_PROMPT}\nOriginal Resume: {original_resume}\nJob: {json.dumps(job_details)}"
+            response = self.llm.predict(prompt)
+            return response
+        except Exception as e:
+            logger.error(f"Error generating resume: {str(e)}")
+            return None
