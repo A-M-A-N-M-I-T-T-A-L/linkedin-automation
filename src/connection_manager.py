@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 import logging
-from .linkedin_bot import LinkedInBot
+from src.linkedin_bot import LinkedInBot
 from config.config import MAX_CONNECTIONS_PER_DAY, CONNECTION_MESSAGE
 from .rate_limiter import RateLimiter
 from .retry_manager import RetryManager
@@ -16,8 +16,6 @@ class ConnectionManager:
         self.last_reset = datetime.now().date()
         self.rate_limiter = RateLimiter()
         self.retry_manager = RetryManager()
-        self.connection_history = {}
-        self.priority_queue = []
         self.connection_tracker = ConnectionTracker()
         self.validation_delay = 60  # seconds to wait before validating
         
@@ -31,7 +29,7 @@ class ConnectionManager:
         self.reset_daily_count()
         return self.connections_sent < MAX_CONNECTIONS_PER_DAY
     
-    @RetryManager.retry_with_backoff
+    @RetryManager.retry_with_backoff(max_retries=3, backoff_factor=2)
     def send_connection_request(self, profile_data):
         if not self.can_send_more_connections():
             return False

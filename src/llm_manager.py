@@ -1,11 +1,16 @@
-import requests
-import json
-from langchain.llms import Ollama
-from langchain.chat_models import ChatOpenAI
+from langchain_ollama import OllamaLLM
+from langchain_community.chat_models import ChatOpenAI
 from config.config import (
-    LLM_PROVIDER, OLLAMA_MODEL, OPENAI_API_KEY, 
-    OPENAI_MODEL, JOB_ANALYSIS_PROMPT, PROFILE_MATCHING_PROMPT
+    LLM_PROVIDER, 
+    OLLAMA_MODEL, 
+    OPENAI_API_KEY, 
+    OPENAI_MODEL,
+    JOB_ANALYSIS_PROMPT,
+    PROFILE_MATCHING_PROMPT,
+    RESUME_ANALYSIS_PROMPT,
+    RESUME_GENERATION_PROMPT
 )
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,7 +21,7 @@ class LLMManager:
         
     def _initialize_llm(self):
         if LLM_PROVIDER == 'ollama':
-            return Ollama(model=OLLAMA_MODEL)
+            return OllamaLLM(model=OLLAMA_MODEL)
         else:
             return ChatOpenAI(
                 api_key=OPENAI_API_KEY,

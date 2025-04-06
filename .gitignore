@@ -59,3 +59,7 @@ tmp/
 # OS specific
 .DS_Store
 Thumbs.db
+
+
+# DB
+/local_chroma_store/

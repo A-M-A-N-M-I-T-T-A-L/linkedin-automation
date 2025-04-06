@@ -1,3 +1,4 @@
+import os
 from src.linkedin_bot import LinkedInBot
 from src.connection_manager import ConnectionManager
 from src.llm_manager import LLMManager
@@ -8,6 +9,14 @@ from config.config import (
     LINKEDIN_EMAIL, LINKEDIN_PASSWORD, 
     MAX_JOBS_TO_PARSE, MAX_CONNECTIONS_PER_DAY
 )
+
+# Ensure the logs directory exists
+os.makedirs('logs', exist_ok=True)
+
+# Apply limits to the bot
+LinkedInBot.MAX_JOBS_TO_PARSE = MAX_JOBS_TO_PARSE
+ConnectionManager.MAX_CONNECTIONS_PER_DAY = MAX_CONNECTIONS_PER_DAY
+
 import logging
 import time
 
@@ -62,4 +71,4 @@ def main():
             bot.driver.quit()
 
 if __name__ == "__main__":
-    main() 
+    main()

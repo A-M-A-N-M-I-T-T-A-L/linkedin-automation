@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class LinkedInBot:
-    def __init__(self, email, password):
+    def __init__(self, email, password, proxy_manager=None):
         self.email = email
         self.password = password
         self.driver = None
@@ -23,10 +23,19 @@ class LinkedInBot:
         }
         self.wait = None
         self.short_wait = None
-        
+        self.proxy_manager = proxy_manager  # Add proxy manager
+
     def setup_driver(self):
         options = webdriver.ChromeOptions()
         options.add_argument('--disable-notifications')
+
+        # Configure proxy if available
+        if self.proxy_manager:
+            proxy = self.proxy_manager.get_proxy()
+            if proxy:
+                options.add_argument(f'--proxy-server={proxy["http"]}')
+                logger.info(f"Using proxy: {proxy['http']}")
+
         self.driver = webdriver.Chrome(options=options)
         self.wait = WebDriverWait(self.driver, 10)
         self.short_wait = WebDriverWait(self.driver, 3)
@@ -44,14 +53,26 @@ class LinkedInBot:
         password_field = self.driver.find_element(By.ID, "password")
         password_field.send_keys(self.password)
         
+        # Uncheck the "Keep me logged in" checkbox using JavaScript
+        try:
+            remember_me_checkbox = self.driver.find_element(By.ID, "rememberMeOptIn-checkbox")
+            self.driver.execute_script("arguments[0].checked = false;", remember_me_checkbox)
+        except Exception as e:
+            logger.warning(f"Could not uncheck 'Keep me logged in': {str(e)}")
+
         # Click login button
         login_button = self.driver.find_element(By.CSS_SELECTOR, "button[type='submit']")
         login_button.click()
         
         # Wait for login to complete
-        self.wait.until(
-            EC.presence_of_element_located((By.CLASS_NAME, "feed-identity-module"))
-        )
+        try:
+            self.wait.until(
+            EC.url_to_be("https://www.linkedin.com/feed/")
+            )
+            logger.info("Successfully logged in and redirected to feed.")
+        except TimeoutException:
+            logger.error("Login failed or redirection to feed did not occur.")
+            raise Exception("Login failed or redirection to feed did not occur.")
         self.session_start = time.time()
         self._dismiss_notifications()
         

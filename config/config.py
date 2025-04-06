@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+load_dotenv(dotenv_path='secrets.env')  # Specify the path to your env file
 
 # LinkedIn Credentials
 LINKEDIN_EMAIL = os.getenv('LINKEDIN_EMAIL')
@@ -25,7 +25,7 @@ USE_PROXY = os.getenv('USE_PROXY', 'False').lower() == 'true'
 PROXY_LIST = os.getenv('PROXY_LIST', '').split(',')
 
 # Database
-DB_PATH = "data/vectors"
+DB_PATH = "./local_chroma_store"
 
 # Logging
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
@@ -90,3 +90,14 @@ Given the job requirements and the profile information:
 4. Flag if this is a high-potential match
 Format the output as JSON.
 """
+
+# Connection Message
+CONNECTION_MESSAGE = os.getenv('CONNECTION_MESSAGE', "Hi [Name], I came across your profile and was impressed by your experience in [Field. I'd love to connect and learn more about your work.")
+
+# Job Application Settings
+MAX_APPLICATIONS_PER_DAY = int(os.getenv('MAX_APPLICATIONS_PER_DAY', 10))
+
+# Search Settings
+MAX_SEARCH_RESULTS = int(os.getenv('MAX_SEARCH_RESULTS', 50))
+SEARCH_KEYWORDS = os.getenv('SEARCH_KEYWORDS', 'Software Engineer')
+SEARCH_LOCATION = os.getenv('SEARCH_LOCATION', 'India')

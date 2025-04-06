@@ -1,5 +1,5 @@
 import streamlit as st
-from src.services import JobService
+from src.services.job_service import JobService
 from src.core.filters import JobFilter
 import plotly.express as px
 from typing import List
@@ -50,17 +50,11 @@ class JobListPage:
         )
 
     def _get_available_skills(self) -> List[str]:
-        # Get skills from previous job listings
         try:
             skills = self.job_service.get_all_skills()
             return sorted(list(set(skills)))
         except Exception:
-            # Fallback to common skills if no data available
-            return [
-                "Python", "JavaScript", "Java", "C++", "SQL",
-                "React", "Angular", "Node.js", "AWS", "Docker",
-                "Kubernetes", "Machine Learning", "Data Analysis"
-            ]
+            return ["Python", "JavaScript", "Java", "C++", "SQL"]
 
     def _render_job_stats(self):
         jobs = self.job_service.get_all_jobs()
@@ -87,19 +81,6 @@ class JobListPage:
         with col1:
             st.write(f"**Location:** {job.location}")
             st.write(f"**Type:** {job.job_type}")
-            if job.salary_range:
-                st.write(f"**Salary Range:** {job.salary_range}")
         with col2:
             st.write(f"**Required Experience:** {job.experience_years} years")
             st.write(f"**Posted:** {job.created_at.strftime('%Y-%m-%d')}")
-            
-        st.write("**Required Skills:**")
-        st.write(", ".join(job.required_skills))
-        
-        if job.description:
-            with st.expander("Job Description"):
-                st.write(job.description)
-                
-        if st.button("Apply", key=f"apply_{job.id}"):
-            st.session_state.current_job = job
-            st.session_state.page = "job_details"

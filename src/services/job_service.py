@@ -1,7 +1,7 @@
-from ..core.job_parser import JobParser
-from ..core.llm_manager import LLMManager
-from ..core.db_manager import DBManager
-from ..models.job import Job
+from src.job_parser import JobParser
+from src.llm_manager import LLMManager
+from src.db_manager import DBManager
+from src.models.job import Job
 from typing import List, Dict
 import logging
 
